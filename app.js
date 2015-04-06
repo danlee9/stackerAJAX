@@ -3,8 +3,17 @@ $(document).ready( function() {
 		// zero out results if previous search has run
 		$('.results').html('');
 		// get the value of the tags the user submitted
-		var tags = $(this).find("input[name='tags']").val();
+		var $input = $(this).find("input[name='tags']")
+		var tags = $input.val();
 		getUnanswered(tags);
+		$input.val('');
+	});
+	$('.inspiration-getter').submit(function(event) {
+		$('.results').html('');
+		var $input = $(this).find('input[name="answerers"]')
+		var tag = $input.val();
+		getInspiration(tag);
+		$input.val('');
 	});
 });
 
@@ -86,6 +95,52 @@ var getUnanswered = function(tags) {
 		var errorElem = showError(error);
 		$('.search-results').append(errorElem);
 	});
+};
+
+var showAnswerer = function(answerer) {
+	// clone our result template code
+	var result = $('.templates .answerer').clone();
+	
+	var answererElem = result.find('.answerer-text a');
+	answererElem.attr('href', answerer.user.link);
+	answererElem.text(answerer.user.display_name);
+
+	var scoreElem = result.find('.score');
+	var userScore = answerer.score;
+	scoreElem.text(userScore);
+
+	var countElem = result.find('.post-count');
+	countElem.text(answerer.post_count);
+
+	return result;
+};
+
+var getInspiration = function(tag) {
+	
+	var url = "http://api.stackexchange.com/2.2/tags/" + tag + 
+	"/top-answerers/all_time";
+
+	var result = $.ajax({
+		url: url,
+		data: {site: 'stackoverflow'},
+		dataType: 'jsonp',
+		type: 'GET'
+	})
+	.done(function(result) {
+		var searchResults = showSearchResults(tag, result.items.length);
+
+		$('.search-results').html(searchResults);
+
+		$.each(result.items, function(i, item) {
+			var answerer = showAnswerer(item);
+			$('.results').append(answerer);
+		});
+	})
+	.fail(function(jqXHR, error, errorThrown) {
+		var errorElem = showError(error);
+		$('.search-results').append(errorElem);
+	});
+
 };
 
 
