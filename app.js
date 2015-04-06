@@ -3,14 +3,14 @@ $(document).ready( function() {
 		// zero out results if previous search has run
 		$('.results').html('');
 		// get the value of the tags the user submitted
-		var $input = $(this).find("input[name='tags']")
+		var $input = $(this).find("input[name='tags']");
 		var tags = $input.val();
 		getUnanswered(tags);
 		$input.val('');
 	});
 	$('.inspiration-getter').submit(function(event) {
 		$('.results').html('');
-		var $input = $(this).find('input[name="answerers"]')
+		var $input = $(this).find('input[name="answerers"]');
 		var tag = $input.val();
 		getInspiration(tag);
 		$input.val('');
